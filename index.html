@@ -1,0 +1,315 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emerald Media</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #071c15;
+            color: #ecfdf5;
+        }
+
+        header {
+            background: #064e3b;
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h2 {
+            color: #6ee7b7;
+            letter-spacing: 1px;
+        }
+
+        header span {
+            font-size: 14px;
+            color: #d1fae5;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 65px 20px 35px;
+        }
+
+        .hero h1 {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 span {
+            color: #34d399;
+        }
+
+        .hero p {
+            color: #a7f3d0;
+            font-size: 15px;
+        }
+
+        .upload-section {
+            width: 85%;
+            max-width: 850px;
+            margin: 25px auto;
+            background: #103c2d;
+            padding: 30px;
+            border: 1px solid #166534;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        .upload-section h2 {
+            margin-bottom: 12px;
+        }
+
+        .upload-section p {
+            color: #a7f3d0;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            background: #10b981;
+            color: #052e20;
+            padding: 12px 25px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .upload-btn:hover {
+            background: #6ee7b7;
+            transform: translateY(-2px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .gallery-section {
+            width: 85%;
+            max-width: 1100px;
+            margin: 55px auto;
+        }
+
+        .gallery-section h2 {
+            margin-bottom: 25px;
+            border-left: 4px solid #10b981;
+            padding-left: 12px;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .media-card {
+            background: #103c2d;
+            border: 1px solid #166534;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .media-card img,
+        .media-card video {
+            width: 100%;
+            height: 190px;
+            object-fit: cover;
+            display: block;
+            background: #000;
+        }
+
+        .media-info {
+            padding: 13px;
+        }
+
+        .media-info p {
+            font-size: 13px;
+            color: #a7f3d0;
+            overflow-wrap: anywhere;
+            margin-bottom: 10px;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 13px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .empty {
+            color: #6ee7b7;
+            text-align: center;
+            padding: 30px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 60px;
+            background: #064e3b;
+            color: #a7f3d0;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 26px;
+            }
+
+            .upload-section,
+            .gallery-section {
+                width: 92%;
+            }
+
+            header {
+                padding: 20px 5%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h2>EMERALD.</h2>
+        <span>My Media Space</span>
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to <span>Emerald Media</span></h1>
+        <p>Your personal space for pictures and videos.</p>
+    </section>
+
+    <section class="upload-section">
+        <h2>Upload Your Media</h2>
+        <p>Select pictures or videos from your device.</p>
+
+        <label for="mediaInput" class="upload-btn">
+            + Choose Media
+        </label>
+
+        <input
+            type="file"
+            id="mediaInput"
+            accept="image/*,video/*"
+            multiple
+        >
+    </section>
+
+    <section class="gallery-section">
+        <h2>My Gallery</h2>
+
+        <div class="gallery" id="gallery">
+            <p class="empty">Your gallery is empty. Add some media!</p>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Emerald Media | Designed with HTML, CSS & JS</p>
+    </footer>
+
+    <script>
+        const mediaInput = document.getElementById("mediaInput");
+        const gallery = document.getElementById("gallery");
+
+        let mediaFiles = [];
+
+        mediaInput.addEventListener("change", function() {
+
+            const files = Array.from(this.files);
+
+            files.forEach(file => {
+
+                if (!file.type.startsWith("image/") &&
+                    !file.type.startsWith("video/")) {
+                    return;
+                }
+
+                mediaFiles.push({
+                    file: file,
+                    url: URL.createObjectURL(file)
+                });
+
+            });
+
+            this.value = "";
+            displayMedia();
+        });
+
+        function displayMedia() {
+
+            gallery.innerHTML = "";
+
+            if (mediaFiles.length === 0) {
+                gallery.innerHTML =
+                    '<p class="empty">Your gallery is empty. Add some media!</p>';
+                return;
+            }
+
+            mediaFiles.forEach((media, index) => {
+
+                const card = document.createElement("div");
+                card.className = "media-card";
+
+                let preview;
+
+                if (media.file.type.startsWith("image/")) {
+                    preview = document.createElement("img");
+                    preview.alt = media.file.name;
+                    preview.src = media.url;
+                } else {
+                    preview = document.createElement("video");
+                    preview.src = media.url;
+                    preview.controls = true;
+                    preview.preload = "metadata";
+                }
+
+                const info = document.createElement("div");
+                info.className = "media-info";
+
+                const name = document.createElement("p");
+                name.textContent = media.file.name;
+
+                const button = document.createElement("button");
+                button.className = "delete-btn";
+                button.textContent = "Delete";
+
+                button.addEventListener("click", () => {
+                    URL.revokeObjectURL(mediaFiles[index].url);
+                    mediaFiles.splice(index, 1);
+                    displayMedia();
+                });
+
+                info.appendChild(name);
+                info.appendChild(button);
+
+                card.appendChild(preview);
+                card.appendChild(info);
+
+                gallery.appendChild(card);
+
+            });
+        }
+    </script>
+
+</body>
+</html>
+
